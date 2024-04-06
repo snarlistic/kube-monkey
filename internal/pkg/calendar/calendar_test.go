@@ -20,4 +20,24 @@ func TestIsWeekDay(t *testing.T) {
 	assert.False(t, isWeekday(monday.Add(time.Hour*24*6)))
 }
 
+func TestShouldParseMtbf(t *testing.T) {
+	duration, _ := ParseMtbf("2d")
+	assert.Equal(t, time.Hour*24*2, duration)
+
+	duration, _ = ParseMtbf("2h")
+	assert.Equal(t, time.Hour*2, duration)
+
+	duration, _ = ParseMtbf("2m")
+	assert.Equal(t, time.Minute*2, duration)
+
+	// Special case where we don't have a time unit and we assume days
+	duration, _ = ParseMtbf("2")
+	assert.Equal(t, duration, time.Hour*24*2)
+}
+
+func TestParseMtbfShouldNotAllowDurationLessThanAMinute(t *testing.T) {
+	_, err := ParseMtbf("30s")
+	assert.NotNil(t, err)
+}
+
 // FIXME:  add more tests
